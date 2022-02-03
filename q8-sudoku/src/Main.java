@@ -2,60 +2,115 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
+    static int[][] sudokuTable = new int[9][9];
+
+    static boolean checkSquare(int row, int column, int value) {
+        int verticalNumber = row / 3;
+        int horizontalNumber = column / 3;
+        int hi, hj;
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                hi = verticalNumber * 3 + i;
+                hj = horizontalNumber * 3 + j;
+                if (hi != row && hj != column && sudokuTable[hi][hj] == value) {
+                    return false;
+                }
+
+            }
+        }
+        return true;
+    }
+
+    static boolean checkColumn(int row, int column, int value) {
+        for (int i = 0; i < 9; i++) {
+            if (i != row && sudokuTable[i][column] == value) {
+                return false;
+            }
+
+        }
+        return true;
+    }
+
+    static boolean checkRow(int row, int column, int value) {
+        for (int i = 0; i < 9; i++) {
+            if (i != column && sudokuTable[row][i] == value) {
+                return false;
+            }
+
+        }
+        return true;
+    }
+
+    static boolean checkNumberRepetition(int row, int column, int value) {
+        System.out.println(Arrays.deepToString(sudokuTable));
+        System.out.println(checkRow(row, column, value) + " " + checkColumn(row, column, value)
+                + checkSquare(row, column, value));
+        if (checkRow(row, column, value) && checkColumn(row, column, value)
+                && checkSquare(row, column, value)) {
+            return true;
+
+        }
+        return false;
+
+
+    }
+
+    static boolean sudokuSolved(int row, int column) {
+        for (int i = row; i < 9; i++) {
+            for (int j = column; j < 9; j++) {
+                if (sudokuTable[i][j] == 0) {
+                    System.out.println("i: " + i + "j: " + j);
+
+                    for (int k = 1; k <= 9; k++) {
+                        sudokuTable[i][j] = k;
+
+
+                        if (checkNumberRepetition(i, j, k) && sudokuSolved(i, j)) {
+                            return true;
+                        }
+                        sudokuTable[i][j] = 0;
+
+                    }
+                    return false;
+                }
+
+
+            }
+            column = 0;
+
+
+        }
+        return true;
+
+    }
 
     public static void main(String[] args) {
-        int firstMatrixRow, firstMatrixColumn,
-                secondMatrixRow, secondMatrixColumn, temp = 0;
+        int n, row, column, value;
         Scanner scanner = new Scanner(System.in);
-        firstMatrixRow = scanner.nextInt();
-        firstMatrixColumn = scanner.nextInt();
-        secondMatrixRow = scanner.nextInt();
-        secondMatrixColumn = scanner.nextInt();
-
-
-        if (firstMatrixRow <= 0 || firstMatrixColumn <= 0
-                || secondMatrixRow <= 0 || secondMatrixColumn <= 0) {
-            System.out.println("invalid matrix size");
-            return;
+        n = scanner.nextInt();
+        for (int i = 0; i < n; i++) {
+            row = scanner.nextInt();
+            column = scanner.nextInt();
+            value = scanner.nextInt();
+            sudokuTable[row][column] = value;
         }
-        if (!(firstMatrixColumn == secondMatrixRow)) {
-            System.out.println("impossible to multiply");
-            return;
-        }
+        System.out.println(Arrays.deepToString(sudokuTable));
+        System.out.println("------------------------------");
+        sudokuSolved(0, 0);
+        System.out.println("------------------------------");
+        System.out.println(Arrays.deepToString(sudokuTable));
 
-        int[][] firstMatrix = new int[firstMatrixRow][firstMatrixColumn];
-        int[][] secondMatrix = new int[secondMatrixRow][secondMatrixColumn];
-        int[][] multiplyMatrix = new int[firstMatrixRow][secondMatrixColumn];
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                System.out.print(sudokuTable[i][j] + " ");
 
-        for (int i = 0; i < firstMatrixRow; i++) {
-            for (int j = 0; j < firstMatrixColumn; j++) {
-                firstMatrix[i][j] = scanner.nextInt();
-            }
-        }
-        for (int i = 0; i < secondMatrixRow; i++) {
-            for (int j = 0; j < secondMatrixColumn; j++) {
-                secondMatrix[i][j] = scanner.nextInt();
-            }
-        }
-
-        for (int i = 0; i < firstMatrixRow; i++) {
-            for (int j = 0; j < secondMatrixColumn; j++) {
-                for (int k = 0; k < firstMatrixColumn; k++) {
-                    temp += firstMatrix[i][k] * secondMatrix[k][j];
-                }
-                multiplyMatrix[i][j] = temp;
-                temp = 0;
-            }
-
-        }
-        for (int i = 0; i < firstMatrixRow; i++) {
-            for (int j = 0; j < secondMatrixColumn; j++) {
-                System.out.print(multiplyMatrix[i][j] + " ");
             }
             System.out.println();
         }
 
 
     }
+
 }
 
